@@ -1,0 +1,92 @@
+version: "3.5"
+services:
+  database:
+    image: mariadb:10.4
+    restart: always
+    expose: ["3306"]
+    command:
+      - mysqld
+      - --character-set-server=utf8
+      - --collation-server=utf8_bin
+      - --innodb-buffer-pool-size=1G
+      - --innodb-flush-method=O_DIRECT
+      - --innodb-log-file-size=128M
+      - --innodb-log-files-in-group=2
+      - --slow-query-log=true
+      - --slow-query-log-file=/dev/stdout
+      - --long-query-time=1
+      #- --query-cache-type=OFF
+      #- --query-cache-size=0
+      #- --innodb-file-format=Barracuda
+      #- --innodb_file_per_table=true
+      #- --innodb-large-prefix=true
+      #- --innodb-default-row-format=Dynamic
+    volumes:
+      - type: volume
+        source: zabbix-database
+        target: /var/lib/mysql
+    secrets:
+      - MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD
+    environment:
+      TZ: Asia/Tokyo
+      MYSQL_USER: zabbix
+      MYSQL_DATABASE: zabbix-db
+      MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_PASSWORD
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/MYSQL_ROOT_PASSWORD
+
+  server:
+    image: zabbix/zabbix-server-mysql:alpine-4.0-latest
+    restart: always
+    ports: ["10051:10051"]
+    volumes:
+     - /etc/localtime:/etc/localtime:ro
+     - /etc/timezone:/etc/timezone:ro
+    secrets:
+      - MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD
+    environment:
+      DB_SERVER_HOST: database
+      MYSQL_USER: zabbix
+      MYSQL_DATABASE: zabbix-db
+      MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_PASSWORD
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/MYSQL_ROOT_PASSWORD
+    depends_on:
+      - database
+
+  web:
+    image: zabbix/zabbix-web-nginx-mysql:alpine-4.0-latest
+    restart: always
+    ports: ["8051:80"]
+    volumes:
+     - /etc/localtime:/etc/localtime:ro
+     - /etc/timezone:/etc/timezone:ro
+    secrets:
+      - MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD
+    environment:
+      PHP_TZ: Asia/Tokyo
+      DB_SERVER_HOST: database
+      MYSQL_USER: zabbix
+      MYSQL_DATABASE: zabbix-db
+      MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_PASSWORD
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/MYSQL_ROOT_PASSWORD
+      #ZBX_SERVER_HOST: zabbix-server
+    depends_on:
+      - server
+      - database
+
+secrets:
+  MYSQL_PASSWORD:
+    file: ./MYSQL_PASSWORD
+  MYSQL_ROOT_PASSWORD:
+    file: ./MYSQL_ROOT_PASSWORD
+
+volumes:
+  zabbix-database:
+    name: zabbix-database
+    driver: local
+
+networks:
+  default:
+    name: zabbix
