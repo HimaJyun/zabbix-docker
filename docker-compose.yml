@@ -53,6 +53,7 @@ services:
     volumes:
      - /etc/localtime:/etc/localtime:ro
      - /etc/timezone:/etc/timezone:ro
+     - ./zabbix/font.ttf:/usr/share/zabbix/assets/fonts/DejaVuSans.ttf:ro
     secrets:
       - MYSQL_PASSWORD
       - MYSQL_ROOT_PASSWORD
@@ -70,9 +71,9 @@ services:
 
 secrets:
   MYSQL_PASSWORD:
-    file: ./MYSQL_PASSWORD
+    file: ./mysql/MYSQL_PASSWORD
   MYSQL_ROOT_PASSWORD:
-    file: ./MYSQL_ROOT_PASSWORD
+    file: ./mysql/MYSQL_ROOT_PASSWORD
 
 volumes:
   zabbix-database:
