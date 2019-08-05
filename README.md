@@ -5,8 +5,8 @@
 最初に必要なファイルと日本語フォントをダウンロードしてくる`prepare.sh`をrootで実行してね。
 
 ```
-git clone https://github.com/HimaJyun/docker-zabbix.git
-cd docker-zabbix
+git clone https://github.com/HimaJyun/zabbix-docker.git
+cd zabbix-docker
 
 sudo ./prepare.sh
 sudo docker-compose up -d
@@ -27,3 +27,11 @@ docker-compose.ymlで場合によっては調整が必要な所
 
 - MySQL 8 (MariaDB 10.4だとエラー出た……)
 - Zabbix 4.0 (LTSを選択してます、別に最新でも良いかも)
+
+## ライセンス
+[LICENSE](https://github.com/HimaJyun/zabbix-docker/blob/master/LICENSE)を参照。
+
+`prepare.sh`を実行すると日本語フォントとして[IPAexフォント](https://ipafont.ipa.go.jp/)がダウンロードされます。
+
+IPAexフォントを使用する際には[IPAフォントライセンス](https://ipafont.ipa.go.jp/ipa_font_license_v1-html)に同意する必要があります。
+

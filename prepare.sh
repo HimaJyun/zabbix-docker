@@ -5,7 +5,7 @@ MYSQL_PASSWORD="./mysql/MYSQL_PASSWORD"
 MYSQL_ROOT_PASSWORD="./mysql/MYSQL_ROOT_PASSWORD"
 FONT_FILE="./zabbix/font.ttf"
 # zipで入手可能なttfフォントなら他のフォントでも可
-FONT_URL="https://ipafont.ipa.go.jp/old/ipafont/ipagp00303.php"
+FONT_URL="https://oscdl.ipa.go.jp/IPAexfont/ipaexg00401.zip"
 
 if [ "$(whoami)" != root ];then
     echo "require root"
@@ -49,4 +49,5 @@ if [ ! -f "${FONT_FILE}" ];then
         find "${tmp}/font" -name "*.ttf" -exec mv -v {} "${FONT_FILE}" \;
         rm -rv "${tmp}"
     }
+    chmod -v 644 "${FONT_FILE}"
 fi
